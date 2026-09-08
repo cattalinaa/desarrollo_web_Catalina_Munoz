@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Métricas de avistamientos</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<header>
+		<h1>Avistamientos de Aves en Chile</h1>
+		<nav>
+			<ul>
+				<li><a href="index.html">Inicio</a></li>
+				<li><a href="volunteer_register.html">Registrarme como voluntario</a></li>
+				<li><a href="avistamiento_register.html">Reportar Avistamiento</a></li>
+				<li><a href="métricas.html">Métricas</a></li>
+			</ul>
+		</nav>
+	</header>
+
+	<main>
+		<section class="form-container">
+			<h2>Métricas</h2>
+			<form id="form-metricas" class="filtros">
+				<div class="form-group">
+					<label for="metrica-region">Región</label>
+					<select id="metrica-region">
+						<option value="">Todas las regiones</option>
+					</select>
+				</div>
+			</form>
+		</section>
+
+		<section class="metricas-grid">
+			<article class="form-container">
+				<h2>Voluntarios registrados</h2>
+				<p id="resumen-usuarios"></p>
+				<canvas id="grafico-usuarios" width="700" height="430">Gráfico de voluntarios registrados.</canvas>
+			</article>
+			<article class="form-container">
+				<h2 id="titulo-avistamientos-tipo">Avistamientos por tipo de ave en todas las regiones</h2>
+				<p id="resumen-avistamientos"></p>
+				<canvas id="grafico-avistamientos" width="700" height="430">Gráfico de avistamientos por tipo de ave.</canvas>
+			</article>
+			<article class="form-container">
+				<h2>Avistamientos por región</h2>
+				<p id="resumen-avistamientos-region"></p>
+				<canvas id="grafico-avistamientos-region" width="700" height="430">Gráfico de avistamientos por región.</canvas>
+			</article>
+		</section>
+	</main>
+
+	<script src="metricas.js"></script>
+</body>
+</html>

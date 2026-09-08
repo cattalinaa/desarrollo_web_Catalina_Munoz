@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Avistamiento</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>Avistamientos de Aves en Chile</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="volunteer_register.html">Registrarme como voluntario</a></li>
+                <li><a href="avistamiento_register.html">Reportar Avistamiento</a></li>
+                <li><a href="métricas.html">Métricas</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="detalle-container">
+            <h2 id="det-titulo">Cargando avistamiento...</h2>
+            
+            <div id="galeria-fotos" class="galeria-grid">
+                <!-- Se cargan dinámicamente -->
+            </div>
+
+            <div class="info-bloque">
+                <h3>Datos del avistamiento</h3>
+                <p><strong>Tipo de ave:</strong> <span id="det-categoria"></span></p>
+                <p><strong>Nombre del ave:</strong> <span id="det-nombre-ave"></span></p>
+                <p><strong>Región:</strong> <span id="det-region"></span></p>
+                <p><strong>Comuna:</strong> <span id="det-comuna"></span></p>
+                <p><strong>Ubicación:</strong> <span id="det-ubicacion"></span></p>
+                <p><strong>Fecha y hora:</strong> <span id="det-fecha"></span></p>
+                <p><strong>Reportado por:</strong> <span id="det-voluntario"></span></p>
+                <p><strong>Descripción:</strong></p>
+                <p id="det-descripcion"></p>
+            </div>
+
+            <a href="index.html" class="btn-secundario">Volver al listado</a>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 - Desarrollo de Aplicaciones Web</p>
+    </footer>
+
+    <script src="detalle.js"></script>
+</body>
+</html>

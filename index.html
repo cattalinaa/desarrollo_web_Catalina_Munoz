@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avistamientos de Aves en Chile</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>Avistamientos de Aves en Chile</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="volunteer_register.html">Registrarme como voluntario</a></li>
+                <li><a href="avistamiento_register.html">Reportar Avistamiento</a></li>
+                <li><a href="métricas.html">Métricas</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section>
+            <h2>Avistamientos registrados</h2>
+            <form id="form-filtros" class="filtros" aria-label="Filtros de avistamientos">
+                <div class="form-group">
+                    <label for="filtro-tipo">Tipo de ave</label>
+                    <select id="filtro-tipo">
+                        <option value="">Todos los tipos</option>
+                        <option value="urbanas_jardin">Aves Urbanas y de Jardín</option>
+                        <option value="pajaros_canto">Pájaros de Canto y Silvestres</option>
+                        <option value="rapaces_carroneras">Rapaces y Carroñeras</option>
+                        <option value="acuaticas_nadadoras">Aves Acuáticas y Nadadoras</option>
+                        <option value="zancudas_orilla">Aves Zancudas y de Orilla</option>
+                        <option value="marinas_pelagicas">Aves Marinas y Pelágicas</option>
+                        <option value="carpinteros_trepadores">Carpinteros y Trepadores</option>
+                        <option value="perdices_terrestres">Palomas Silvestres y Perdices</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="filtro-orden">Ordenar por</label>
+                    <select id="filtro-orden">
+                        <option value="fecha-desc">Fecha más reciente</option>
+                        <option value="fecha-asc">Fecha más antigua</option>
+                        <option value="lugar-asc">Lugar (A-Z)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="filtro-fecha">Fecha del avistamiento</label>
+                    <input type="date" id="filtro-fecha">
+                    <small id="aviso-filtro-fecha" class="mensaje-campo"></small>
+                </div>
+                <div class="form-group">
+                    <label for="filtro-region">Región</label>
+                    <select id="filtro-region">
+                        <option value="">Todas las regiones</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="filtro-comuna">Comuna</label>
+                    <select id="filtro-comuna" disabled>
+                        <option value="">Todas las comunas</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-principal">Aplicar filtros</button>
+            </form>
+            <div id="contenedor-actividades" class="tarjetas-grid">
+            </div>
+            <nav id="paginacion" class="paginacion" aria-label="Páginas de avistamientos"></nav>
+        </section>
+    </main>
+
+    <script src="val_index.js"></script>
+</body>
+</html>

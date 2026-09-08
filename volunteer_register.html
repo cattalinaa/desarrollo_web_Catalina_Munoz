@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Voluntarios</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>Portal de Avistamiento de Aves</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="volunteer_register.html">Registrarme como voluntario</a></li>
+                <li><a href="avistamiento_register.html">Reportar Avistamiento</a></li>
+                <li><a href="métricas.html">Métricas</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="form-container">
+            <h2>Registro de Voluntarios</h2>
+            <p>Regístrate como voluntario para obtener autorización para publicar avistamientos de aves.</p>
+            <br>
+            
+            <form id="form-voluntario" action="#" method="POST" novalidate>
+                
+                <!-- Datos personales -->
+                <div class="form-group">
+                    <label for="nombre_voluntario">Nombre (*):</label>
+                    <input type="text" id="nombre_voluntario" name="nombre_voluntario" maxlength="50" required>
+                    <span id="aviso-nombre" class="mensaje-campo" role="alert"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="apellido_paterno">Apellido paterno (*):</label>
+                    <input type="text" id="apellido_paterno" name="apellido_paterno" maxlength="50" required>
+                    <span id="aviso-apellido-paterno" class="mensaje-campo" role="alert"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="apellido_materno">Apellido materno (*):</label>
+                    <input type="text" id="apellido_materno" name="apellido_materno" maxlength="50" required>
+                    <span id="aviso-apellido-materno" class="mensaje-campo" role="alert"></span>
+                </div>
+
+                <!-- Email -->
+                <div class="form-group">
+                    <label for="email_voluntario">Correo Electrónico (*):</label>
+                    <input type="email" id="email_voluntario" name="email_voluntario" required>
+                    <span id="aviso-email" class="mensaje-campo" role="alert"></span>
+                </div>
+
+                <!-- Teléfono / Celular -->
+                <div class="form-group">
+                    <label for="telefono_voluntario">Teléfono (*):</label>
+                    <input type="tel" id="telefono_voluntario" name="telefono_voluntario" placeholder="+56912345678" required>
+                    <span id="aviso-telefono" class="mensaje-campo" role="alert"></span>
+                </div>
+
+                <!-- Región -->
+                <div class="form-group">
+                    <label for="region">Región (*):</label>
+                    <select id="region" name="region" required>
+                        <option value="">-- Seleccione Región --</option>
+                    </select>
+                    <span id="aviso-region" class="mensaje-campo" role="alert"></span>
+                </div>
+
+                <!-- Comuna -->
+                <div class="form-group">
+                    <label for="comuna">Comuna (*):</label>
+                    <select id="comuna" name="comuna" required disabled>
+                        <option value="">-- Seleccione Comuna --</option>
+                    </select>
+                    <span id="aviso-comuna" class="mensaje-campo" role="alert"></span>
+                </div>
+
+
+                <button type="submit" class="btn-principal">Registrarme como Voluntario</button>
+            </form>
+        </section>
+    </main>
+
+    <!-- Modal de Confirmación -->
+    <div id="modal-confirmacion-voluntario" class="modal hidden">
+        <div class="modal-contenido">
+            <h3>¿Confirmar Registro?</h3>
+            <p>Al confirmar, te registrarás localmente como voluntario habilitado para reportar actividades.</p>
+            <div class="modal-acciones">
+                <button id="btn-confirmar-voluntario-si" class="btn-principal">Sí, confirmar</button>
+                <button id="btn-confirmar-voluntario-no" class="btn-secundario">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="valReguin_comuna.js"></script>
+    <script src="validaciones_voluntario.js"></script>
+</body>
+</html>

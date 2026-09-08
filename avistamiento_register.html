@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportar avistamiento de ave</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>Avistamientos de Aves en Chile</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="volunteer_register.html">Registrarme como voluntario</a></li>
+                <li><a href="avistamiento_register.html">Reportar Avistamiento</a></li>
+                <li><a href="métricas.html">Métricas</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="form-container">
+            <h2>Reportar avistamiento de ave</h2>
+
+            <div id="acceso-voluntario" class="alerta-box">
+                <p><strong>Acceso restringido:</strong> ingresa el email usado en el registro de voluntario.</p>
+                <form id="form-acceso-voluntario" novalidate>
+                    <label for="email-acceso">Email del voluntario</label>
+                    <input type="email" id="email-acceso" required>
+                    <span id="aviso-acceso" class="mensaje-campo" role="alert"></span>
+                    <button type="submit" class="btn-principal">Validar email</button>
+                </form>
+                <a href="volunteer_register.html" class="btn-secundario">Registrarme como voluntario</a>
+            </div>
+
+            <!-- Formulario habilitado solo si es voluntario -->
+            <form id="form-actividad" class="hidden" action="#" method="POST" enctype="multipart/form-data" novalidate>
+                
+                <p class="ayuda">Los campos marcados con (*) son obligatorios. La fecha no puede ser futura ni tener más de un año de antigüedad.</p>
+
+                <div class="form-group">
+                    <label for="region">Región (*):</label>
+                    <select id="region" name="region" required>
+                        <option value="">-- Seleccione Región --</option>
+                    </select>
+                    <span id="aviso-region-avistamiento" class="mensaje-campo" role="alert"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="comuna">Comuna (*):</label>
+                    <select id="comuna" name="comuna" required disabled>
+                        <option value="">-- Seleccione Comuna --</option>
+                    </select>
+                    <span id="aviso-comuna-avistamiento" class="mensaje-campo" role="alert"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="sector">Lugar del avistamiento (opcional):</label>
+                    <input type="text" id="sector" name="sector" maxlength="100" placeholder="Ej: Parque O'Higgins">
+                </div>
+
+                <div class="form-group">
+                    <label for="tipo_ave">Tipo de ave (*):</label>
+                    <select id="tipo_ave" name="tipo_ave" required>
+                        <option value="">-- Seleccione tipo --</option>
+                        <option value="urbanas_jardin">Aves Urbanas y de Jardín</option>
+                        <option value="pajaros_canto">Pájaros de Canto y Silvestres</option>
+                        <option value="rapaces_carroneras">Rapaces y Carroñeras</option>
+                        <option value="acuaticas_nadadoras">Aves Acuáticas y Nadadoras</option>
+                        <option value="zancudas_orilla">Aves Zancudas y de Orilla</option>
+                        <option value="marinas_pelagicas">Aves Marinas y Pelágicas</option>
+                        <option value="carpinteros_trepadores">Carpinteros y Trepadores</option>
+                        <option value="perdices_terrestres">Palomas Silvestres y Perdices</option>
+                    </select>
+                    <small id="descripcion-tipo-ave" class="mensaje-campo"></small>
+                    <span id="aviso-tipo-ave" class="mensaje-campo" role="alert"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="nombre_ave">Nombre del ave (*):</label>
+                    <input type="text" id="nombre_ave" name="nombre_ave" minlength="2" maxlength="80" required placeholder="Ej: Loica">
+                    <span id="aviso-nombre-ave" class="mensaje-campo" role="alert"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="fecha_avistamiento">Fecha del avistamiento (*):</label>
+                    <input type="date" id="fecha_avistamiento" name="fecha_avistamiento" required>
+                       <span id="aviso-fecha" class="mensaje-campo" role="alert"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="hora_avistamiento">Hora del avistamiento (*):</label>
+                    <input type="time" id="hora_avistamiento" name="hora_avistamiento" required>
+                       <span id="aviso-hora" class="mensaje-campo" role="alert"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="evidencia">Foto o video del avistamiento (mínimo 1, máximo 5) (*):</label>
+                    <input type="file" id="evidencia" name="evidencia" accept="image/jpeg, image/png, image/webp, video/mp4, video/webm" multiple required>
+                    <small>Formatos aceptados: JPG, PNG, WEBP, MP4 o WEBM.</small>
+                </div>
+
+                <button type="submit" class="btn-principal">Registrar este Avistamiento</button>
+            </form>
+        </section>
+    </main>
+
+    <!-- Modal de Confirmación -->
+    <section id="modal-confirmacion" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="titulo-confirmacion">
+        <article class="modal-contenido">
+            <h3 id="titulo-confirmacion">¿Confirmar publicación del avistamiento?</h3>
+            <p>El avistamiento quedará registrado bajo tu firma de voluntario autorizado.</p>
+            <footer class="modal-acciones">
+                <button type="button" id="btn-confirmar-si" class="btn-principal">Sí, publicar</button>
+                <button type="button" id="btn-confirmar-no" class="btn-secundario">Revisar</button>
+            </footer>
+        </article>
+    </section>
+
+
+    <script src="validaciones_registrado.js"></script>
+    <script src="valReguin_comuna.js"></script>
+</body>
+</html>
