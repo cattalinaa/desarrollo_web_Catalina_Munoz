@@ -2,7 +2,7 @@
 
 ## Descripción
 
-Prototipo de un sistema web para registrar voluntarios y gestionar avistamientos de aves en Chile. El proyecto está construido únicamente con HTML5, CSS3 y JavaScript, sin servidor ni base de datos remota, de acuerdo con las condiciones de la tarea.
+Sistema web para registrar voluntarios y gestionar avistamientos de aves en Chile. El proyecto está construido únicamente con HTML5, CSS3 y JavaScript, sin servidor ni base de datos remota, de acuerdo con las condiciones de la tarea.
 
 ## Vistas principales
 
