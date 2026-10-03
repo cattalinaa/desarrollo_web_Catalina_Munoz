@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block titulo %}Listado de Avistamientos{% endblock %}
+{% block contenido %}
+    <section>
+        <h2>Avistamientos registrados</h2>
+        <form id="form-filtros" class="filtros" method="GET" action="{{ url_for('listado') }}">
+            <div class="form-group">
+                <label for="tipo">Tipo de ave</label>
+                <select id="tipo" name="tipo">
+                    <option value="">Todos los tipos</option>
+                    <option value="urbanas_jardin" {% if filtros.tipo == "urbanas_jardin" %}selected{% endif %}>Aves Urbanas y de Jardín</option>
+                    <option value="pajaros_canto" {% if filtros.tipo == "pajaros_canto" %}selected{% endif %}>Pájaros de Canto y Silvestres</option>
+                    <option value="rapaces_carroneras" {% if filtros.tipo == "rapaces_carroneras" %}selected{% endif %}>Rapaces y Carroñeras</option>
+                    <option value="acuaticas_nadadoras" {% if filtros.tipo == "acuaticas_nadadoras" %}selected{% endif %}>Aves Acuáticas y Nadadoras</option>
+                    <option value="zancudas_orilla" {% if filtros.tipo == "zancudas_orilla" %}selected{% endif %}>Aves Zancudas y de Orilla</option>
+                    <option value="marinas_pelagicas" {% if filtros.tipo == "marinas_pelagicas" %}selected{% endif %}>Aves Marinas y Pelágicas</option>
+                    <option value="carpinteros_trepadores" {% if filtros.tipo == "carpinteros_trepadores" %}selected{% endif %}>Carpinteros y Trepadores</option>
+                    <option value="perdices_terrestres" {% if filtros.tipo == "perdices_terrestres" %}selected{% endif %}>Palomas Silvestres y Perdices</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="orden">Ordenar por</label>
+                <select id="orden" name="orden">
+                    <option value="fecha-desc" {% if filtros.orden == "fecha-desc" %}selected{% endif %}>Fecha más reciente</option>
+                    <option value="fecha-asc" {% if filtros.orden == "fecha-asc" %}selected{% endif %}>Fecha más antigua</option>
+                    <option value="lugar-asc" {% if filtros.orden == "lugar-asc" %}selected{% endif %}>Lugar (A-Z)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="fecha">Fecha del avistamiento</label>
+                <input type="date" id="fecha" name="fecha" value="{{ filtros.fecha }}">
+            </div>
+            <div class="form-group">
+                <label for="region">Región</label>
+                <select id="region" name="region">
+                    <option value="">Todas las regiones</option>
+                    {% for region in regiones %}
+                    <option value="{{ region.id }}" {% if filtros.region|string == region.id|string %}selected{% endif %}>{{ region.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="comuna">Comuna</label>
+                <select id="comuna" name="comuna" disabled data-preseleccion="{{ filtros.comuna }}">
+                    <option value="">Todas las comunas</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-principal">Aplicar filtros</button>
+        </form>
+
+        {% if avistamientos %}
+            <div class="tabla-contenedor">
+                <table id="tabla-avistamientos">
+                    <thead>
+                        <tr>
+                            <th scope="col">Ave</th>
+                            <th scope="col">Región</th>
+                            <th scope="col">Comuna</th>
+                            <th scope="col">Lugar</th>
+                            <th scope="col">Fecha y hora</th>
+                            <th scope="col">Reportado por</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for avistamiento in avistamientos %}
+                        <tr class="fila-clicable" onclick="window.location='{{ url_for('detalle', avistamiento_id=avistamiento.id) }}'">
+                            <td>{{ avistamiento.ave.nombre }}</td>
+                            <td>{{ avistamiento.comuna.region.nombre }}</td>
+                            <td>{{ avistamiento.comuna.nombre }}</td>
+                            <td>{{ avistamiento.lugar }}</td>
+                            <td>{{ avistamiento.fecha_hora.strftime("%d/%m/%Y %H:%M") }}</td>
+                            <td>{{ avistamiento.voluntario.nombre }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <nav id="paginacion" class="paginacion" aria-label="Páginas de avistamientos">
+                {% if pagina > 1 %}
+                    <a class="btn-secundario" href="{{ url_for('listado', pagina=pagina-1, **filtros) }}">Anterior</a>
+                {% endif %}
+                {% for numero in range(1, total_paginas + 1) %}
+                    {% if numero == pagina %}
+                        <span class="pagina-activa" aria-current="page">{{ numero }}</span>
+                    {% else %}
+                        <a class="pagina-enlace" href="{{ url_for('listado', pagina=numero, **filtros) }}">{{ numero }}</a>
+                    {% endif %}
+                {% endfor %}
+                {% if pagina < total_paginas %}
+                    <a class="btn-secundario" href="{{ url_for('listado', pagina=pagina+1, **filtros) }}">Siguiente</a>
+                {% endif %}
+            </nav>
+        {% else %}
+            <p>No hay avistamientos que coincidan con los filtros.</p>
+        {% endif %}
+    </section>
+
+    <script>
+        const regionesYComunas = {{ comunas_por_region | tojson }};
+    </script>
+    <script src="{{ url_for('static', filename='js/listado.js') }}"></script>
+{% endblock %}

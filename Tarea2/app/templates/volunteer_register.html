@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block titulo %}Registro de Voluntarios{% endblock %}
+{% block contenido %}
+    <section class="form-container">
+        <h2>Registro de Voluntarios</h2>
+        <p>Regístrate como voluntario para poder publicar avistamientos de aves.</p>
+
+        <form id="form-voluntario" action="{{ url_for('registrar_voluntario') }}" method="POST" novalidate>
+            {% for campo, etiqueta, id_aviso in [
+                ("nombre_voluntario", "Nombre", "aviso-nombre"),
+                ("apellido_paterno", "Apellido paterno", "aviso-apellido-paterno"),
+                ("apellido_materno", "Apellido materno", "aviso-apellido-materno")
+            ] %}
+            <div class="form-group">
+                <label for="{{ campo }}">{{ etiqueta }} (*):</label>
+                <input type="text" id="{{ campo }}" name="{{ campo }}" maxlength="50" required value="{{ datos.get(campo, '') }}">
+                <span id="{{ id_aviso }}" class="mensaje-campo{% if errores.get(campo) %} visible{% endif %}" role="alert">{{ errores.get(campo, '') }}</span>
+            </div>
+            {% endfor %}
+
+            <div class="form-group">
+                <label for="email_voluntario">Correo Electrónico (*):</label>
+                <input type="email" id="email_voluntario" name="email_voluntario" required value="{{ datos.get('email', '') }}">
+                <span id="aviso-email" class="mensaje-campo{% if errores.get('email') %} visible{% endif %}" role="alert">{{ errores.get('email', '') }}</span>
+            </div>
+
+            <div class="form-group">
+                <label for="telefono_voluntario">Teléfono (*):</label>
+                <input type="tel" id="telefono_voluntario" name="telefono_voluntario" placeholder="+56912345678" required value="{{ datos.get('telefono', '') }}">
+                <span id="aviso-telefono" class="mensaje-campo{% if errores.get('telefono') %} visible{% endif %}" role="alert">{{ errores.get('telefono', '') }}</span>
+            </div>
+
+            <div class="form-group">
+                <label for="region">Región (*):</label>
+                <select id="region" name="region" required>
+                    <option value="">-- Seleccione Región --</option>
+                    {% for region in regiones %}
+                    <option value="{{ region.id }}" {% if datos.get('region')|string == region.id|string %}selected{% endif %}>{{ region.nombre }}</option>
+                    {% endfor %}
+                </select>
+                <span id="aviso-region" class="mensaje-campo{% if errores.get('region') %} visible{% endif %}" role="alert">{{ errores.get('region', '') }}</span>
+            </div>
+
+            <div class="form-group">
+                <label for="comuna">Comuna (*):</label>
+                <select id="comuna" name="comuna" required disabled data-preseleccion="{{ datos.get('comuna', '') }}">
+                    <option value="">-- Seleccione Comuna --</option>
+                </select>
+                <span id="aviso-comuna" class="mensaje-campo{% if errores.get('comuna') %} visible{% endif %}" role="alert">{{ errores.get('comuna', '') }}</span>
+            </div>
+
+            <button type="submit" class="btn-principal">Registrarme como Voluntario</button>
+        </form>
+    </section>
+
+    <div id="modal-confirmacion-voluntario" class="modal hidden">
+        <div class="modal-contenido">
+            <h3>¿Confirmar Registro?</h3>
+            <p>Al confirmar, quedarás registrado como voluntario en la base de datos.</p>
+            <div class="modal-acciones">
+                <button id="btn-confirmar-voluntario-si" class="btn-principal">Sí, confirmar</button>
+                <button id="btn-confirmar-voluntario-no" class="btn-secundario">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const regionesYComunas = {{ comunas_por_region | tojson }};
+    </script>
+    <script src="{{ url_for('static', filename='js/valReguin_comuna.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/validaciones_voluntario.js') }}"></script>
+{% endblock %}
