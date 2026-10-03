@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block titulo %}Detalle del Avistamiento{% endblock %}
+{% block contenido %}
+    <section class="detalle-container">
+        <h2>{{ avistamiento.ave.nombre }}</h2>
+
+        {% if avistamiento.registros %}
+            <div id="galeria-fotos" class="galeria-grid">
+                {% for registro in avistamiento.registros %}
+                    {% if registro.ruta_archivo.endswith((".mp4", ".webm")) %}
+                        <video src="{{ url_for('static', filename=registro.ruta_archivo) }}" controls></video>
+                    {% else %}
+                        <img src="{{ url_for('static', filename=registro.ruta_archivo) }}" alt="{{ registro.nombre_archivo }}">
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>Este avistamiento no tiene archivos adjuntos.</p>
+        {% endif %}
+
+        <div class="info-bloque">
+            <h3>Datos del avistamiento</h3>
+            <p><strong>Nombre del ave:</strong> {{ avistamiento.ave.nombre }}</p>
+            <p><strong>Región:</strong> {{ avistamiento.comuna.region.nombre }}</p>
+            <p><strong>Comuna:</strong> {{ avistamiento.comuna.nombre }}</p>
+            <p><strong>Ubicación:</strong> {{ avistamiento.lugar or "No informado" }}</p>
+            <p><strong>Fecha y hora:</strong> {{ avistamiento.fecha_hora.strftime("%d/%m/%Y %H:%M") }}</p>
+            <p><strong>Reportado por:</strong> {{ avistamiento.voluntario.nombre }} ({{ avistamiento.voluntario.email }})</p>
+            <p><strong>Teléfono del voluntario:</strong> {{ avistamiento.voluntario.telefono }}</p>
+        </div>
+
+        <a href="{{ url_for('listado') }}" class="btn-secundario">Volver al listado</a>
+    </section>
+{% endblock %}

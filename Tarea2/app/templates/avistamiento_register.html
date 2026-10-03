@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block titulo %}Informar Avistamiento{% endblock %}
+{% block contenido %}
+    <section class="form-container">
+        <h2>Informar Avistamiento</h2>
+
+        <div id="acceso-voluntario" class="alerta-box{% if not mostrar_acceso %} hidden{% endif %}">
+            <p><strong>Acceso restringido:</strong> ingresa el email usado en el registro de voluntario.</p>
+            <form id="form-acceso-voluntario" novalidate>
+                <label for="email-acceso">Email del voluntario</label>
+                <input type="email" id="email-acceso" required>
+                <span id="aviso-acceso" class="mensaje-campo{% if error_acceso %} visible{% endif %}" role="alert">{{ error_acceso }}</span>
+                <button type="submit" class="btn-principal">Validar email</button>
+            </form>
+            <a href="{{ url_for('registrar_voluntario') }}" class="btn-secundario">Registrarme como voluntario</a>
+        </div>
+
+        <form id="form-actividad"{% if mostrar_acceso %} class="hidden"{% endif %} action="{{ url_for('registrar_avistamiento') }}" method="POST" enctype="multipart/form-data" novalidate>
+
+            <input type="hidden" id="email_voluntario" name="email_voluntario" value="{{ email_validado }}">
+
+            <p class="ayuda">Los campos marcados con (*) son obligatorios. La fecha no puede ser futura ni tener más de un mes de antigüedad.</p>
+
+            <div class="form-group">
+                <label for="region">Región (*):</label>
+                <select id="region" name="region" required>
+                    <option value="">-- Seleccione Región --</option>
+                    {% for region in regiones %}
+                    <option value="{{ region.id }}" {% if datos.get('region')|string == region.id|string %}selected{% endif %}>{{ region.nombre }}</option>
+                    {% endfor %}
+                </select>
+                <span id="aviso-region-avistamiento" class="mensaje-campo{% if errores.get('region') %} visible{% endif %}" role="alert">{{ errores.get('region', '') }}</span>
+            </div>
+
+            <div class="form-group">
+                <label for="comuna">Comuna (*):</label>
+                <select id="comuna" name="comuna" required disabled data-preseleccion="{{ datos.get('comuna', '') }}">
+                    <option value="">-- Seleccione Comuna --</option>
+                </select>
+                <span id="aviso-comuna-avistamiento" class="mensaje-campo{% if errores.get('comuna') %} visible{% endif %}" role="alert">{{ errores.get('comuna', '') }}</span>
+            </div>
+
+            <div class="form-group">
+                <label for="sector">Lugar del avistamiento (opcional):</label>
+                <input type="text" id="sector" name="sector" maxlength="200" placeholder="Ej: Parque O'Higgins" value="{{ datos.get('lugar', '') }}">
+                <span id="aviso-lugar" class="mensaje-campo{% if errores.get('lugar') %} visible{% endif %}" role="alert">{{ errores.get('lugar', '') }}</span>
+            </div>
+
+            <div class="form-group">
+                <label for="tipo_ave">Tipo de ave (orientativo):</label>
+                <select id="tipo_ave" name="tipo_ave">
+                    <option value="">-- Seleccione tipo --</option>
+                    <option value="urbanas_jardin">Aves Urbanas y de Jardín</option>
+                    <option value="pajaros_canto">Pájaros de Canto y Silvestres</option>
+                    <option value="rapaces_carroneras">Rapaces y Carroñeras</option>
+                    <option value="acuaticas_nadadoras">Aves Acuáticas y Nadadoras</option>
+                    <option value="zancudas_orilla">Aves Zancudas y de Orilla</option>
+                    <option value="marinas_pelagicas">Aves Marinas y Pelágicas</option>
+                    <option value="carpinteros_trepadores">Carpinteros y Trepadores</option>
+                    <option value="perdices_terrestres">Palomas Silvestres y Perdices</option>
+                </select>
+                <small id="descripcion-tipo-ave" class="mensaje-campo"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="nombre_ave">Nombre del ave (*):</label>
+                <div class="autocomplete">
+                    <input type="text" id="nombre_ave" name="nombre_ave" minlength="2" maxlength="80" required placeholder="Ej: Loica" value="{{ datos.get('nombre_ave', '') }}">
+                    <ul id="lista-aves-sugerencias" class="autocomplete-lista hidden"></ul>
+                </div>
+                <span id="aviso-nombre-ave" class="mensaje-campo{% if errores.get('nombre_ave') %} visible{% endif %}" role="alert">{{ errores.get('nombre_ave', '') }}</span>
+            </div>
+
+            <div class="form-group">
+                <label for="fecha_avistamiento">Fecha del avistamiento (*):</label>
+                <input type="date" id="fecha_avistamiento" name="fecha_avistamiento" required value="{{ datos.get('fecha', '') }}">
+                <span id="aviso-fecha" class="mensaje-campo{% if errores.get('fecha') %} visible{% endif %}" role="alert">{{ errores.get('fecha', '') }}</span>
+            </div>
+
+            <div class="form-group">
+                <label for="hora_avistamiento">Hora del avistamiento (*):</label>
+                <input type="time" id="hora_avistamiento" name="hora_avistamiento" required value="{{ datos.get('hora', '') }}">
+                <span id="aviso-hora" class="mensaje-campo{% if errores.get('hora') %} visible{% endif %}" role="alert">{{ errores.get('hora', '') }}</span>
+            </div>
+
+            <div class="form-group">
+                <label for="evidencia">Foto o video del avistamiento (mínimo 1, máximo 5) (*):</label>
+                <input type="file" id="evidencia" name="evidencia" accept="image/jpeg, image/png, image/webp, video/mp4, video/webm" multiple required>
+                <small>Formatos aceptados: JPG, PNG, WEBP, MP4 o WEBM.</small>
+                <span id="aviso-evidencia" class="mensaje-campo{% if errores.get('evidencia') %} visible{% endif %}" role="alert">{{ errores.get('evidencia', '') }}</span>
+            </div>
+
+            <button type="submit" class="btn-principal">Registrar este Avistamiento</button>
+        </form>
+    </section>
+
+    <section id="modal-confirmacion" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="titulo-confirmacion">
+        <article class="modal-contenido">
+            <h3 id="titulo-confirmacion">¿Confirmar publicación del avistamiento?</h3>
+            <p>El avistamiento quedará registrado a nombre del voluntario indicado.</p>
+            <footer class="modal-acciones">
+                <button type="button" id="btn-confirmar-si" class="btn-principal">Sí, publicar</button>
+                <button type="button" id="btn-confirmar-no" class="btn-secundario">Revisar</button>
+            </footer>
+        </article>
+    </section>
+
+    <script>
+        const regionesYComunas = {{ comunas_por_region | tojson }};
+        const urlVerificarVoluntario = "{{ url_for('verificar_voluntario') }}";
+        const nombresAves = {{ aves | map(attribute='nombre') | list | tojson }};
+    </script>
+    <script src="{{ url_for('static', filename='js/validaciones_registrado.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/autocompletar_ave.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/valReguin_comuna.js') }}"></script>
+{% endblock %}
