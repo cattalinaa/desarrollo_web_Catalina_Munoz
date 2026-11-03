@@ -1,8 +1,35 @@
 {% extends "base.html" %}
+
 {% block titulo %}Estadísticas{% endblock %}
+
 {% block contenido %}
-    <section class="form-container">
-        <h2>Estadísticas</h2>
-        <p>No disponible aún.</p>
-    </section>
+<section class="form-container" style="max-width: 800px; margin: 0 auto; padding: 20px;">
+    <h2>Estadísticas del Sistema</h2>
+
+    <!-- Gráfico 1:Avistamientos por día-->
+    <article style="margin-bottom: 40px;">
+        <h3>Avistamientos Registrados por Día</h3>
+        <canvas id="chartDia"></canvas>
+    </article>
+
+    <!-- Gráfico 2: Torta-Avistamientos por ave -->
+    <article style="margin-bottom: 40px; max-width: 500px; margin-left: auto; margin-right: auto;">
+        <h3>Total de Avistamientos por Tipo de Ave</h3>
+        <canvas id="chartAve"></canvas>
+    </article>
+
+    <!-- Gráfico 3: Barras-Voluntarios por comuna -->
+    <article style="margin-bottom: 40px;">
+        <h3>Total de Voluntarios Registrados por Comuna</h3>
+        <canvas id="chartComuna"></canvas>
+    </article>
+
+    <div style="text-align: center; margin-top: 30px;">
+        <a href="{{ url_for('portada') }}" class="btn" style="text-decoration: none; padding: 10px 20px; background-color: #004085; color: white; border-radius: 5px;">Volver a la portada</a>
+    </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="{{ url_for('static', filename='js/metricas.js') }}"></script>
 {% endblock %}

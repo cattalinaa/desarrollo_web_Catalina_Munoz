@@ -6,13 +6,14 @@ from flask import Flask, abort, flash, jsonify, redirect, render_template, reque
 from sqlalchemy import func, or_
 
 from db import db
-from models import Ave, Avistamiento, Comuna, Region, Registro, Voluntario
-from validaciones import REGEX_EMAIL, validar_avistamiento, validar_voluntario
+from models import Ave, Avistamiento, Comuna, Region, Registro, Voluntario,Comentario
+from validaciones import REGEX_EMAIL, validar_avistamiento, validar_voluntario,validar_comentario
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://cc5002:programacionweb@localhost:3306/tarea2"
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://cc5002:programacionweb@localhost:3306/tarea2?charset=utf8mb4"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["UPLOAD_FOLDER"] = os.path.join(app.static_folder, "uploads")
+os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 app.config["MAX_CONTENT_LENGTH"] = 20 * 1024 * 1024
 app.secret_key = "tarea2-cc5002-desarrollo-web"
 db.init_app(app)
@@ -209,10 +210,89 @@ def detalle(avistamiento_id):
     return render_template("detalle.html", avistamiento=avistamiento)
 
 
+@app.route("/metricas")
 @app.route("/estadisticas")
 def estadisticas():
     return render_template("metricas.html")
 
+
+@app.route("/api/estadisticas")
+def api_estadisticas():
+    por_dia_query = (
+        db.session.query(
+            func.date(Avistamiento.fecha_hora).label("fecha"),
+            func.count(Avistamiento.id).label("total")
+        )
+        .group_by(func.date(Avistamiento.fecha_hora))
+        .order_by(func.date(Avistamiento.fecha_hora).asc())
+        .all()
+    )
+    por_dia = [{"fecha": str(row.fecha), "total": row.total} for row in por_dia_query]
+
+    por_ave_query = (
+        db.session.query(
+            Ave.nombre.label("ave"),
+            func.count(Avistamiento.id).label("total")
+        )
+        .join(Avistamiento, Ave.id == Avistamiento.ave_id)
+        .group_by(Ave.id, Ave.nombre)
+        .all()
+    )
+    por_ave = [{"ave": row.ave, "total": row.total} for row in por_ave_query]
+
+    por_comuna_query = (
+        db.session.query(
+            Comuna.nombre.label("comuna"),
+            func.count(Voluntario.id).label("total")
+        )
+        .join(Voluntario, Comuna.id == Voluntario.comuna_id)
+        .group_by(Comuna.id, Comuna.nombre)
+        .having(func.count(Voluntario.id) > 0)
+        .all()
+    )
+    por_comuna = [{"comuna": row.comuna, "total": row.total} for row in por_comuna_query]
+
+    return jsonify(por_dia=por_dia, por_ave=por_ave, por_comuna=por_comuna)
+
+
+@app.route("/api/avistamiento/<int:avistamiento_id>/comentarios", methods=["GET"])
+def api_obtener_comentarios(avistamiento_id):
+    comentarios = (
+        db.session.query(Comentario)
+        .filter(Comentario.avistamiento_id == avistamiento_id)
+        .order_by(Comentario.fecha.desc())
+        .all()
+    )
+    datos = [
+        {
+            "id": c.id,
+            "nombre": c.nombre,
+            "texto": c.texto,
+            "fecha": c.fecha.strftime("%d-%m-%Y %H:%M"),
+        }
+        for c in comentarios
+    ]
+    return jsonify(comentarios=datos)
+
+
+@app.route("/api/avistamiento/<int:avistamiento_id>/comentarios", methods=["POST"])
+def api_agregar_comentario(avistamiento_id):
+    payload = request.get_json() or {}
+    errores, datos = validar_comentario(payload)
+
+    if errores:
+        return jsonify(success=False, errores=list(errores.values())), 400
+
+    comentario = Comentario(
+        nombre=datos["nombre"],
+        texto=datos["texto"],
+        fecha=datetime.now(),
+        avistamiento_id=avistamiento_id,
+    )
+    db.session.add(comentario)
+    db.session.commit()
+
+    return jsonify(success=True, mensaje="Comentario agregado correctamente."), 201
 
 if __name__ == "__main__":
     app.run(debug=True)

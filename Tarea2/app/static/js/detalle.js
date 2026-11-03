@@ -1,52 +1,91 @@
-const categoriasAves = {
-    urbanas_jardin: "Aves Urbanas y de Jardín",
-    pajaros_canto: "Pájaros de Canto y Silvestres",
-    rapaces_carroneras: "Rapaces y Carroñeras",
-    acuaticas_nadadoras: "Aves Acuáticas y Nadadoras",
-    zancudas_orilla: "Aves Zancudas y de Orilla",
-    marinas_pelagicas: "Aves Marinas y Pelágicas",
-    carpinteros_trepadores: "Carpinteros y Trepadores",
-    perdices_terrestres: "Palomas Silvestres y Perdices"
-};
-
 document.addEventListener("DOMContentLoaded", () => {
-    const parametros = new URLSearchParams(window.location.search);
-    const id = parametros.get("id");
-    const guardados = JSON.parse(localStorage.getItem("avistamientos") || "[]");
-    const avistamiento = guardados.find((registro) => String(registro.id) === id);
+    const contenedor = document.querySelector(".detalle-container");
+    if (!contenedor) return;
 
-    const registro = avistamiento || {
-        tipoAve: "urbanas_jardin",
-        nombreAve: "Zorzal",
-        region: "Región Metropolitana",
-        comuna: "Santiago",
-        lugar: "Parque O'Higgins",
-        fecha: "2026-08-20",
-        hora: "10:30",
-        emailVoluntario: "Ejemplo"
-    };
+    const avistamientoId = contenedor.dataset.avistamientoId;
+    const form = document.getElementById("form-comentario");
+    const divErrores = document.getElementById("comentario-errores");
+    const listaComentarios = document.getElementById("lista-comentarios");
 
-    document.getElementById("det-titulo").textContent = registro.nombreAve;
-    document.getElementById("det-categoria").textContent = categoriasAves[registro.tipoAve] || registro.tipoAve || "No informado";
-    document.getElementById("det-nombre-ave").textContent = registro.nombreAve || "No informado";
-    document.getElementById("det-region").textContent = registro.region || "No informada";
-    document.getElementById("det-comuna").textContent = registro.comuna || "No informada";
-    document.getElementById("det-ubicacion").textContent = registro.lugar || "No informado";
-    document.getElementById("det-fecha").textContent = `${registro.fecha || "No informada"} ${registro.hora || ""}`;
-    document.getElementById("det-voluntario").textContent = registro.emailVoluntario || "No informado";
-    document.getElementById("det-descripcion").textContent = registro.descripcion || "Sin descripción.";
+    function cargarComentarios() {
+        fetch(`/api/avistamiento/${avistamientoId}/comentarios`)
+            .then((response) => response.json())
+            .then((data) => {
+                if (!data.comentarios || data.comentarios.length === 0) {
+                    listaComentarios.innerHTML = "<p><em>No hay comentarios registrados para este avistamiento.</em></p>";
+                    return;
+                }
 
-    const galeria = document.getElementById("galeria-fotos");
-    const evidencias = Array.isArray(registro.evidencia) ? registro.evidencia : [];
-    evidencias.forEach((evidencia) => {
-        if (!evidencia.datos) return;
-        const elemento = evidencia.tipo.startsWith("video/")
-            ? document.createElement("video")
-            : document.createElement("img");
-        elemento.src = evidencia.datos;
-        elemento.controls = evidencia.tipo.startsWith("video/");
-        elemento.alt = evidencia.nombre || "Evidencia del avistamiento";
-        if (elemento.tagName === "VIDEO") elemento.setAttribute("aria-label", elemento.alt);
-        galeria.appendChild(elemento);
+                listaComentarios.innerHTML = data.comentarios.map((c) => `
+                    <div style="border-bottom: 1px solid #e0e0e0; padding: 10px 0;">
+                        <strong>${escapeHTML(c.nombre)}</strong> 
+                        <small style="color: #666; margin-left: 8px;">(${escapeHTML(c.fecha)})</small>
+                        <p style="margin: 5px 0 0 0;">${escapeHTML(c.texto)}</p>
+                    </div>
+                `).join("");
+            })
+            .catch(() => {
+                listaComentarios.innerHTML = "<p style='color: red;'>Error al cargar los comentarios.</p>";
+            });
+    }
+
+    form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        ocultarErrores();
+
+        const nombre = document.getElementById("nombre").value.trim();
+        const texto = document.getElementById("texto").value.trim();
+
+        const errores = [];
+        if (!nombre || nombre.length < 3 || nombre.length > 50) {
+            errores.push("El nombre de comentarista es obligatorio y debe tener entre 3 y 50 caracteres.");
+        }
+        if (!texto || texto.length < 5) {
+            errores.push("El texto del comentario es obligatorio y debe tener al menos 5 caracteres.");
+        }
+
+        if (errores.length > 0) {
+            mostrarErrores(errores);
+            return;
+        }
+
+        fetch(`/api/avistamiento/${avistamientoId}/comentarios`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ nombre: nombre, texto: texto }),
+        })
+            .then(async (response) => {
+                const data = await response.json();
+                if (!response.ok || !data.success) {
+                    throw new Error(data.errores ? data.errores.join("<br>") : "Ocurrió un error al guardar el comentario.");
+                }
+                return data;
+            })
+            .then(() => {
+                form.reset();
+                cargarComentarios(); 
+            })
+            .catch((err) => {
+                mostrarErrores([err.message]);
+            });
     });
+
+    function mostrarErrores(lista) {
+        divErrores.innerHTML = lista.join("<br>");
+        divErrores.style.display = "block";
+    }
+
+    function ocultarErrores() {
+        divErrores.style.display = "none";
+        divErrores.innerHTML = "";
+    }
+
+    function escapeHTML(str) {
+        return String(str).replace(/[&<>"']/g, (m) => ({
+            "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+        }[m]));
+    }
+    cargarComentarios();
 });

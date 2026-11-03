@@ -175,3 +175,27 @@ def validar_avistamiento(form, archivos):
 
     contexto = {"voluntario": voluntario, "ave": ave, "comuna": comuna, "fecha_hora": fecha_hora}
     return errores, datos, contexto
+
+def validar_comentario(form):
+    errores = {}
+    nombre = form.get("nombre", "").strip()
+    texto = form.get("texto", "").strip()
+
+    if not nombre:
+        errores["nombre"] = "El nombre del comentarista es obligatorio."
+    elif len(nombre) < 3 or len(nombre) > 50:
+        errores["nombre"] = "El nombre debe tener entre 3 y 50 caracteres."
+
+    if not texto:
+        errores["texto"] = "El texto del comentario es obligatorio."
+    elif len(texto) < 5:
+        errores["texto"] = "El texto del comentario debe tener al menos 5 caracteres."
+    elif len(texto) > 300:
+        errores["texto"] = "El comentario no puede superar los 300 caracteres."
+
+    datos = {
+        "nombre": nombre,
+        "texto": texto
+    }
+
+    return errores, datos
