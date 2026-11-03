@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block titulo %}Portada - Avistamientos de Aves en Chile{% endblock %}
+{% block contenido %}
+    <section class="form-container">
+        <h2>Bienvenido(a) al Portal de Avistamiento de Aves</h2>
+        <p>Regístrate como voluntario, informa avistamientos o consulta las estadísticas del sistema.</p>
+        <nav class="menu-portada" aria-label="Menú principal">
+            <ul>
+                <li><a class="btn-principal" href="{{ url_for('registrar_voluntario') }}">Registrar Voluntario</a></li>
+                <li><a class="btn-principal" href="{{ url_for('registrar_avistamiento') }}">Informar Avistamiento</a></li>
+                <li><a class="btn-principal" href="{{ url_for('estadisticas') }}">Estadísticas</a></li>
+            </ul>
+        </nav>
+    </section>
+
+    <section>
+        <h2>Últimos avistamientos</h2>
+        {% if ultimos %}
+            <div class="tabla-contenedor">
+                <table id="tabla-avistamientos">
+                    <thead>
+                        <tr>
+                            <th scope="col">Ave</th>
+                            <th scope="col">Lugar</th>
+                            <th scope="col">Región</th>
+                            <th scope="col">Comuna</th>
+                            <th scope="col">Fecha y hora</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for avistamiento in ultimos %}
+                        <tr>
+                            <td>{{ avistamiento.ave.nombre }}</td>
+                            <td>{{ avistamiento.lugar }}</td>
+                            <td>{{ avistamiento.comuna.region.nombre }}</td>
+                            <td>{{ avistamiento.comuna.nombre }}</td>
+                            <td>{{ avistamiento.fecha_hora.strftime("%d/%m/%Y %H:%M") }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <p><a href="{{ url_for('listado') }}">Ver listado completo de avistamientos</a></p>
+        {% else %}
+            <p>Aún no hay avistamientos registrados.</p>
+        {% endif %}
+    </section>
+{% endblock %}

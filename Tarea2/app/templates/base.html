@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titulo %}Avistamientos de Aves en Chile{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <header>
+        <h1>Avistamientos de Aves en Chile</h1>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('portada') }}">Inicio</a></li>
+                <li><a href="{{ url_for('listado') }}">Listado de Avistamientos</a></li>
+                <li><a href="{{ url_for('registrar_voluntario') }}">Registrar Voluntario</a></li>
+                <li><a href="{{ url_for('registrar_avistamiento') }}">Informar Avistamiento</a></li>
+                <li><a href="{{ url_for('estadisticas') }}">Estadísticas</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        {% with mensajes = get_flashed_messages(with_categories=true) %}
+            {% if mensajes %}
+                {% for categoria, mensaje in mensajes %}
+                    <div class="mensaje-flash {{ categoria }}" role="status">{{ mensaje }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block contenido %}{% endblock %}
+    </main>
+
+</body>
+</html>
